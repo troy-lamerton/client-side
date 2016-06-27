@@ -3,3 +3,11 @@ body {
   background-color: #000;
 }
 
+.satActor {
+  background-color: #fff;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 30px;
+  height: 30px;
+}
