@@ -4,6 +4,7 @@ var greeting = require('./views/greeting.hbs')
 var satLocation = require('./views/satLocation.hbs')
 
 var endpoint = 'https://api.wheretheiss.at/v1/satellites'
+var updateSatLocation = require('./updateSatLocation')
 
 xhr.get(endpoint, function (err, data) {
   if (err) {
@@ -15,30 +16,16 @@ xhr.get(endpoint, function (err, data) {
   target.innerHTML = greeting({name: JSON.parse(data.body)[0].name})
 })
 
+var doc = document.getElementsByTagName('main')[0]
+
 var button = document.getElementById('getButton')
-button.addEventListener('click', updateSatLocation)
+button.addEventListener('click', updateDOM)
 
-function updateSatLocation () {
-  var doc = document.getElementsByTagName('main')[0]
+function updateDOM () {
+  doc.innerHTML = satLocation(updateSatLocation(endpoint + '/25544'))
+}
 
-  xhr.get(endpoint + '/25544', function (err, data) {
-    var body = JSON.parse(data.body)
-    if (err) {
-      console.error(err)
-    }
-    var altitude = body.altitude
-    altitude = altitude.floor()
-
-    // convert num to pixel string
-    altitude = altitude.toString() + 'px'
-    console.log('new top value:', altitude)
-    doc.innerHTML = satLocation({name: body.name, altitude: altitude, timestamp: body.timestamp})
-
-    if (err) {
-      console.log('xhr error')
-      console.error(err)
-    }
-    console.log(data.body)
-  })
-
+var pingSatLocation;
+window.onload = function () {
+  pingSatLocation = window.setInterval(updateDOM, 1200)
 }
